@@ -1,0 +1,77 @@
+package model;
+
+public class Product{
+    private String name;
+    private String description;
+    private int price;
+    private int amount;
+    private int purchasedNumber;
+    private ProductCategory productCategory;
+
+    public Product(String name, String description, int price, int amount, int purchasedNumber, int productCategory) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.amount = amount;
+        this.purchasedNumber = purchasedNumber;
+        switch (productCategory){
+            case 1: this.productCategory = ProductCategory.BOOK;
+                break;
+            case 2: this.productCategory = ProductCategory.ELECTRONIC;
+                break;
+            case 3: this.productCategory = ProductCategory.CLOTHES_AND_ACCESSORIES;
+                break;
+            case 4: this.productCategory = ProductCategory.FOOD_AND_DRINKS;
+                break;
+            case 5: this.productCategory = ProductCategory.STATIONERY;
+                break;
+            case 6: this.productCategory = ProductCategory.SPORTS;
+                break;
+            case 7: this.productCategory = ProductCategory.BEAUTY_AND_PERSONAL_CARE_PRODUCTS;
+                break;
+            case 8: this.productCategory = ProductCategory.TOYS_AND_GAMES;
+                break;
+
+        }
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public int getPurchasedNumber() {
+        return purchasedNumber;
+    }
+
+    public void setPurchasedNumber(int purchasedNumber) {
+        this.purchasedNumber = purchasedNumber;
+    }
+}
