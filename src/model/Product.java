@@ -16,9 +16,9 @@ public class Product{
         this.amount = amount;
         this.purchasedNumber = purchasedNumber;
         switch (productCategory){
-            case 1: this.productCategory = ProductCategory.BOOK;
+            case 1: this.productCategory = ProductCategory.BOOKS;
                 break;
-            case 2: this.productCategory = ProductCategory.ELECTRONIC;
+            case 2: this.productCategory = ProductCategory.ELECTRONICS;
                 break;
             case 3: this.productCategory = ProductCategory.CLOTHES_AND_ACCESSORIES;
                 break;
@@ -90,6 +90,5 @@ public class Product{
 
     public void decreaseAvailableQuantity(int cantidad) {
         this.amount -= cantidad;
-        this.amount += cantidad;
     }
 }
