@@ -41,7 +41,7 @@ public class Orders implements OrderPrice {
     public double orderPrice() {
         int finalPrice=0;
         for(int i=0; i<products.size();i++){
-            finalPrice = products.get(i).getPrice();
+            finalPrice+= products.get(i).getPrice();
         }
         return finalPrice;
     }
