@@ -14,7 +14,7 @@ public class VirtualShop {
         products = new ArrayList<>();
     }
 
-    public void addProduct(String name, String description, int price, int amount, int purchasedNumber, int productCategory) throws Exception {
+    public void addProductToInventory(String name, String description, int price, int amount, int purchasedNumber, int productCategory) throws Exception {
         //Agregar productos al inventario
         for(Product product : products){
             if(product.getName().equalsIgnoreCase(name)){
@@ -25,41 +25,52 @@ public class VirtualShop {
         products.add(newProduct);
     }
 
-    public void deleteProduct(String nameProduct) {
+    public void deleteProductFromInventory(String nameProduct) {
         //Eliminar del inventario
         for (Product p : products) {
             if (p.getName().equals(nameProduct)) {
                 products.remove(p);
-                System.out.println("Producto eliminado exitosamente.");
+//                System.out.println("Producto eliminado exitosamente.");
                 return;
             }
         }
-        System.out.println("Producto no encontrado en el inventario.");
+//        System.out.println("Producto no encontrado en el inventario.");
     }
 
-    public void addProductToOrder(Product product){
+    public Product productExists(String nameProduct){
+        for (Product p : products) {
+            if (p.getName().equals(nameProduct)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    public ArrayList<Product> addProductToOrder(Product product){
         orderProducts.add(product);
+        return orderProducts;
     }
 
-    public void addOrder(String buyerName, ArrayList<Product> products, String date) {
+    public ArrayList<Orders> addOrder(String buyerName, ArrayList<Product> products, String date) {
         Orders nuevoPedido = new Orders(buyerName, products, date);
         for (Product p : products) {
             p.decreaseAvailableQuantity(1);
         }
         orders.add(nuevoPedido);
+        return orders;
     }
 
     public ArrayList<Product> searchProductsByName(String nameProduct) {
         ArrayList<Product> result = new ArrayList<Product>();
         for(Product product : products){
-            if(product.getName().equalsIgnoreCase(nameProduct)){
+            if(product.getName().contains(nameProduct)){
                 result.add(product);
             }
         }
         return result;
     }
 
-    public ArrayList<Product> searchProductByPrice(int priceProduct, int minPrice, int maxPrice) {
+    public ArrayList<Product> searchProductsByPrice(int minPrice, int maxPrice) {
         ArrayList<Product> result = new ArrayList<Product>();
         for(Product product : products){
             if(product.getPrice() >= minPrice && product.getPrice() <= maxPrice){
@@ -69,7 +80,7 @@ public class VirtualShop {
         return result;
     }
 
-    public ArrayList<Product> getProductsByCategory(ProductCategory category) {
+    public ArrayList<Product> searchProductsByCategory(ProductCategory category) {
         ArrayList<Product> result = new ArrayList<Product>();
         for (Product product : products) {
             if (product.getProductCategory() == category) {
@@ -79,7 +90,7 @@ public class VirtualShop {
         return result;
     }
 
-    public ArrayList<Product> getProductsByTimesPurchased(int minTimesPurchased, int maxTimesPurchased) {
+    public ArrayList<Product> searchProductsByTimesPurchased(int minTimesPurchased, int maxTimesPurchased) {
         ArrayList<Product> result = new ArrayList<>();
         for (Product p : products) {
             if (p.getPurchasedNumber() >= minTimesPurchased && p.getPurchasedNumber() <= maxTimesPurchased) {
@@ -91,10 +102,12 @@ public class VirtualShop {
 
     public Orders searchOrderByBuyerName(String  buyerName) {
         for(Orders order : orders){
-            if(order.getBuyerName().equalsIgnoreCase(buyerName)){
+            if(order.getBuyerName().contains(buyerName)){
+//                System.out.println("Pedido encontrado");
                 return order;
             }
         }
+//        System.out.println("Pedido no encontrado");
         return null;
     }
 
