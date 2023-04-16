@@ -1,6 +1,7 @@
 package model;
 
 public class Product{
+
     private String name;
     private String description;
     private int price;
@@ -73,5 +74,22 @@ public class Product{
 
     public void setPurchasedNumber(int purchasedNumber) {
         this.purchasedNumber = purchasedNumber;
+    }
+
+    public ProductCategory getProductCategory() {
+        return productCategory;
+    }
+
+    public void setProductCategory(ProductCategory productCategory) {
+        this.productCategory = productCategory;
+    }
+
+    public void addAvailableQuantity(int cantidad) {
+        this.amount += cantidad;
+    }
+
+    public void decreaseAvailableQuantity(int cantidad) {
+        this.amount -= cantidad;
+        this.amount += cantidad;
     }
 }
