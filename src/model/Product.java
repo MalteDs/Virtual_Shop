@@ -1,6 +1,7 @@
 package model;
 
 public class Product{
+
     private String name;
     private String description;
     private int price;
@@ -15,9 +16,9 @@ public class Product{
         this.amount = amount;
         this.purchasedNumber = purchasedNumber;
         switch (productCategory){
-            case 1: this.productCategory = ProductCategory.BOOK;
+            case 1: this.productCategory = ProductCategory.BOOKS;
                 break;
-            case 2: this.productCategory = ProductCategory.ELECTRONIC;
+            case 2: this.productCategory = ProductCategory.ELECTRONICS;
                 break;
             case 3: this.productCategory = ProductCategory.CLOTHES_AND_ACCESSORIES;
                 break;
@@ -73,5 +74,21 @@ public class Product{
 
     public void setPurchasedNumber(int purchasedNumber) {
         this.purchasedNumber = purchasedNumber;
+    }
+
+    public ProductCategory getProductCategory() {
+        return productCategory;
+    }
+
+    public void setProductCategory(ProductCategory productCategory) {
+        this.productCategory = productCategory;
+    }
+
+    public void addAvailableQuantity(int cantidad) {
+        this.amount += cantidad;
+    }
+
+    public void decreaseAvailableQuantity(int cantidad) {
+        this.amount -= cantidad;
     }
 }
