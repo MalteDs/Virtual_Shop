@@ -34,7 +34,7 @@ public class VirtualShop {
                 return;
             }
         }
-//        System.out.println("Producto no encontrado en el inventario.");
+    //        System.out.println("Producto no encontrado en el inventario.");
     }
 
     public Product productExists(String nameProduct){
