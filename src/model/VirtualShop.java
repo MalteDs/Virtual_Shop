@@ -5,7 +5,6 @@ import java.util.ArrayList;
 public class VirtualShop {
     private ArrayList<Orders> orders;
     private ArrayList<Product> products;
-
     private ArrayList<Product> orderProducts;
 
     public VirtualShop() {
@@ -18,11 +17,12 @@ public class VirtualShop {
         //Agregar productos al inventario
         for(Product product : products){
             if(product.getName().equalsIgnoreCase(name)){
-                throw new Exception("El producto ya existe");
+                throw new Exception("The product already exists in the inventory.");
             }
         }
         Product newProduct = new Product(name, description, price, amount, purchasedNumber, productCategory);
         products.add(newProduct);
+        System.out.println("Product added successfully.");
     }
 
     public void deleteProductFromInventory(String nameProduct) {
@@ -34,7 +34,7 @@ public class VirtualShop {
                 return;
             }
         }
-//        System.out.println("Producto no encontrado en el inventario.");
+    //        System.out.println("Producto no encontrado en el inventario.");
     }
 
     public Product productExists(String nameProduct){
