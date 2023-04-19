@@ -13,13 +13,14 @@ public class Main {
         int sel = 0;
         boolean exit = false;
         while(!exit){
-            System.out.println("-----MERCADO LIBRE----- \n 1. Inventory \n 2. Orders" );
+            System.out.println("-----MERCADO LIBRE----- \n 1. Inventory \n 2. Orders \n 3. Save and exit" );
             sel = sc.nextInt();
             sc.nextLine();
-            switch(sel){
-                case 1: inventory(sc); break;
-                case 2: orders(sc); break;
-                default: throw new IllegalArgumentException("Enter a valid option");
+            switch (sel) {
+                case 1 -> inventory(sc);
+                case 2 -> orders(sc);
+                case 3 -> exit = true;
+                default -> throw new IllegalArgumentException("Enter a valid option");
             }
         }
         sc.close();
@@ -29,15 +30,10 @@ public class Main {
         System.out.println("-----MERCADO LIBRE INVENTORY----- \n 1. Register new product \n 2. Delete product");
         int sel = sc.nextInt();
         sc.nextLine();
-        switch(sel) {
-            case 1:
-                registerNewProduct(sc);
-                break;
-            case 2:
-                deleteProduct(sc);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid option");
+        switch (sel) {
+            case 1 -> registerNewProduct(sc);
+            case 2 -> deleteProduct(sc);
+            default -> throw new IllegalArgumentException("Invalid option");
         }
     }
 
@@ -82,15 +78,10 @@ public class Main {
         System.out.println("-----MERCADO LIBRE ORDERS----- \n 1. Register new order \n 2. Delete order");
         int sel = sc.nextInt();
         sc.nextLine();
-        switch(sel) {
-            case 1:
-                registerNewOrder(sc);
-                break;
-            case 2:
-                deleteOrder(sc);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid option");
+        switch (sel) {
+            case 1 -> registerNewOrder(sc);
+            case 2 -> deleteOrder(sc);
+            default -> throw new IllegalArgumentException("Invalid option");
         }
 
     }
@@ -99,7 +90,6 @@ public class Main {
         ArrayList<Product> products = new ArrayList<>();
         String buyerName = "";
         String date = "";
-        String nameProduct = "";
         boolean exit = false;
         int productSel = 0;
         System.out.println("-----REGISTER NEW ORDER-----");
@@ -114,10 +104,11 @@ public class Main {
         }
         while (!exit){
             System.out.println("Add new product to the order: \n 1. Yes \n 2. No");
-            switch (productSel){
-                case 1: products = addingProductsToOrder(sc); break;
-                case 2: exit = true; break;
-                default: throw new IllegalArgumentException("Enter a valid option");
+            productSel = sc.nextInt();
+            switch (productSel) {
+                case 1 -> products = addingProductsToOrder(sc);
+                case 2 -> exit = true;
+                default -> throw new IllegalArgumentException("Enter a valid option");
             }
         }
         vs.addOrder(buyerName, products, date);
