@@ -1,9 +1,12 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Collections;
+
+import exceptions.*;
 
 public class VirtualShop {
-    private ArrayList<Orders> orders;
+    private ArrayList<Order> orders;
     private ArrayList<Product> products;
     private ArrayList<Product> orderProducts;
 
@@ -22,7 +25,6 @@ public class VirtualShop {
         }
         Product newProduct = new Product(name, description, price, amount, purchasedNumber, productCategory);
         products.add(newProduct);
-        System.out.println("Product added successfully.");
     }
 
     public void deleteProductFromInventory(String nameProduct) {
@@ -38,21 +40,40 @@ public class VirtualShop {
     }
 
     public Product productExists(String nameProduct){
-        for (Product p : products) {
-            if (p.getName().equals(nameProduct)) {
-                return p;
+        Product product = null;
+        int begin = 0;
+        int end = products.size() - 1;
+        while (begin <= end) {
+            int mid = (begin + end) / 2;
+            Product midProduct = products.get(mid);
+            String midName = midProduct.getName();
+            if (midName.equalsIgnoreCase(nameProduct)) {
+                product = midProduct;
+            }
+            if (midName.compareToIgnoreCase(nameProduct) < 0) {
+                begin = mid + 1;
+            } else {
+                end = mid - 1;
             }
         }
-        return null;
+        return product;
     }
 
-    public ArrayList<Product> addProductToOrder(Product product){
-        orderProducts.add(product);
-        return orderProducts;
+    public ArrayList<Product> addProductToOrder(Product product, int quantity) throws Exception {
+        try{
+            if(product.getAmount()<=0){
+                throw new quantityException("The product is not available.");
+            }
+            orderProducts.add(product);
+            product.decreaseAvailableQuantity(quantity);
+            return orderProducts;
+        }catch (quantityException e){
+            throw new Exception(e.getMessage());
+        }
     }
 
-    public ArrayList<Orders> addOrder(String buyerName, ArrayList<Product> products, String date) {
-        Orders nuevoPedido = new Orders(buyerName, products, date);
+    public ArrayList<Order> addOrder(String buyerName, ArrayList<Product> products, String date) {
+        Order nuevoPedido = new Order(buyerName, products, date);
         for (Product p : products) {
             p.decreaseAvailableQuantity(1);
         }
@@ -62,9 +83,20 @@ public class VirtualShop {
 
     public ArrayList<Product> searchProductsByName(String nameProduct) {
         ArrayList<Product> result = new ArrayList<Product>();
-        for(Product product : products){
-            if(product.getName().contains(nameProduct)){
-                result.add(product);
+        Collections.sort(products);
+        int begin = 0;
+        int end = products.size() - 1;
+        while (begin <= end) {
+            int mid = (begin + end) / 2;
+            Product midProduct = products.get(mid);
+            String midName = midProduct.getName();
+            if (midName.equalsIgnoreCase(nameProduct)) {
+                result.add(midProduct);
+            }
+            if (midName.compareToIgnoreCase(nameProduct) < 0) {
+                begin = mid + 1;
+            } else {
+                end = mid - 1;
             }
         }
         return result;
@@ -72,9 +104,19 @@ public class VirtualShop {
 
     public ArrayList<Product> searchProductsByPrice(int minPrice, int maxPrice) {
         ArrayList<Product> result = new ArrayList<Product>();
-        for(Product product : products){
-            if(product.getPrice() >= minPrice && product.getPrice() <= maxPrice){
-                result.add(product);
+        int begin = 0;
+        int end = products.size() - 1;
+        while (begin <= end) {
+            int mid = (begin + end) / 2;
+            Product midProduct = products.get(mid);
+            int midPrice = midProduct.getPrice();
+            if (midPrice >= minPrice && midPrice <= maxPrice) {
+                result.add(midProduct);
+            }
+            if (midPrice < minPrice) {
+                begin = mid + 1;
+            } else {
+                end = mid - 1;
             }
         }
         return result;
@@ -82,9 +124,19 @@ public class VirtualShop {
 
     public ArrayList<Product> searchProductsByCategory(ProductCategory category) {
         ArrayList<Product> result = new ArrayList<Product>();
-        for (Product product : products) {
-            if (product.getProductCategory() == category) {
-                result.add(product);
+        int begin = 0;
+        int end = products.size() - 1;
+        while (begin <= end){
+            int mid = (begin + end) / 2;
+            Product midProduct = products.get(mid);
+            ProductCategory midCategory = midProduct.getProductCategory();
+            if(midCategory == category){
+                result.add(midProduct);
+            }
+            if(midCategory.compareTo(category) < 0){
+                begin = mid + 1;
+            }else{
+                end = mid - 1;
             }
         }
         return result;
@@ -92,22 +144,42 @@ public class VirtualShop {
 
     public ArrayList<Product> searchProductsByTimesPurchased(int minTimesPurchased, int maxTimesPurchased) {
         ArrayList<Product> result = new ArrayList<>();
-        for (Product p : products) {
-            if (p.getPurchasedNumber() >= minTimesPurchased && p.getPurchasedNumber() <= maxTimesPurchased) {
-                result.add(p);
+        int begin = 0;
+        int end = products.size() - 1;
+        while (begin <= end) {
+            int mid = (begin + end) / 2;
+            Product midProduct = products.get(mid);
+            int midTimesPurchased = midProduct.getPurchasedNumber();
+            if (midTimesPurchased >= minTimesPurchased && midTimesPurchased <= maxTimesPurchased) {
+                result.add(midProduct);
+            }
+            if (midTimesPurchased < minTimesPurchased) {
+                begin = mid + 1;
+            } else {
+                end = mid - 1;
             }
         }
         return result;
     }
 
-    public Orders searchOrderByBuyerName(String  buyerName) {
-        for(Orders order : orders){
-            if(order.getBuyerName().contains(buyerName)){
-//                System.out.println("Pedido encontrado");
+    public Order searchOrderByBuyerName(String  buyerName) {
+        Order order = null;
+        int begin = 0;
+        int end = orders.size() - 1;
+        while (begin <= end) {
+            int mid = (begin + end) / 2;
+            Order midOrder = orders.get(mid);
+            String midBuyerName = midOrder.getBuyerName();
+            if (midBuyerName.equals(buyerName)) {
+                order = midOrder;
                 return order;
             }
+            if (midBuyerName.compareTo(buyerName) < 0) {
+                begin = mid + 1;
+            } else {
+                end = mid - 1;
+            }
         }
-//        System.out.println("Pedido no encontrado");
         return null;
     }
 
