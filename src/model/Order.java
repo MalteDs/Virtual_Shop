@@ -2,12 +2,12 @@ package model;
 
 import java.util.ArrayList;
 
-public class Orders implements OrderPrice {
+public class Order implements OrderPrice {
     private String buyerName;
     private ArrayList<Product> products;
     private String date;
 
-    public Orders(String buyerName, ArrayList<Product> products, String date) {
+    public Order(String buyerName, ArrayList<Product> products, String date) {
         this.buyerName = buyerName;
         this.products = products;
         this.date = date;

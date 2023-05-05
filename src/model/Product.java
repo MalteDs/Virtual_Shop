@@ -1,6 +1,6 @@
 package model;
 
-public class Product{
+public class Product implements productQuantity, Comparable<Product> {
 
     private String name;
     private String description;
@@ -83,12 +83,17 @@ public class Product{
     public void setProductCategory(ProductCategory productCategory) {
         this.productCategory = productCategory;
     }
-
+    @Override
     public void addAvailableQuantity(int cantidad) {
         this.amount += cantidad;
     }
-
+    @Override
     public void decreaseAvailableQuantity(int cantidad) {
         this.amount -= cantidad;
+    }
+
+    @Override
+    public int compareTo(Product product) {
+        return this.name.compareTo(product.getName());
     }
 }

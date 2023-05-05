@@ -1,5 +1,4 @@
 package test;
-import jdk.jfr.Category;
 import junit.framework.TestCase;
 import model.*;
 
@@ -28,18 +27,27 @@ public class VirtualShopTest extends TestCase {
         Product orderProduct1 = virtualShop.productExists("Laptop");
         Product orderProduct2 = virtualShop.productExists("Red T-shirt");
         Product orderProduct3 = virtualShop.productExists("Ana Frank's diary");
-        virtualShop.addProductToOrder(orderProduct1);
-        virtualShop.addProductToOrder(orderProduct2);
-        return virtualShop.addProductToOrder(orderProduct3);
+        try {
+            virtualShop.addProductToOrder(orderProduct1, 1);
+            virtualShop.addProductToOrder(orderProduct2, 3);
+            return virtualShop.addProductToOrder(orderProduct3, 1);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public ArrayList<Product> setUpStage4(){
         setUpStage2();
         Product orderProduct1 = virtualShop.productExists("Laptop");
-        return virtualShop.addProductToOrder(orderProduct1);
+        try {
+            return virtualShop.addProductToOrder(orderProduct1, 1);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
-    public ArrayList<Orders> setUpStage5(){
+    public ArrayList<Order> setUpStage5(){
         setUpStage3();
         try{
             ArrayList<Product> products1 = setUpStage3();
@@ -85,7 +93,7 @@ public class VirtualShopTest extends TestCase {
         setUpStage2();
         try{
             Product orderProduct = virtualShop.productExists("Red T-shirt");
-            virtualShop.addProductToOrder(orderProduct);
+            virtualShop.addProductToOrder(orderProduct, 3);
         } catch (Exception e){
             fail();
         }
@@ -95,7 +103,7 @@ public class VirtualShopTest extends TestCase {
         setUpStage2();
         try{
             Product orderProduct = virtualShop.productExists("Laptop");
-            virtualShop.addProductToOrder(orderProduct);
+            virtualShop.addProductToOrder(orderProduct, 1);
         } catch (Exception e){
             fail();
         }
@@ -197,14 +205,14 @@ public void testSearchProductsByCategory1(){
     }
 
     public void testSearchOrderByBuyerName(){
-        ArrayList<Orders> productsToBuy = setUpStage5();
-        Orders order= virtualShop.searchOrderByBuyerName("David M");
+        ArrayList<Order> productsToBuy = setUpStage5();
+        Order order= virtualShop.searchOrderByBuyerName("David M");
         assertEquals(order.getBuyerName(), "David M");
     }
 
     public void testSearchOrderByBuyerName2(){
-        ArrayList<Orders> productsToBuy = setUpStage5();
-        Orders order= virtualShop.searchOrderByBuyerName("Alejando F");
+        ArrayList<Order> productsToBuy = setUpStage5();
+        Order order= virtualShop.searchOrderByBuyerName("Alejando F");
         assertEquals(order.getBuyerName(), "Alejando F");
     }
 
