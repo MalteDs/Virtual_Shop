@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import exceptions.*;
 import com.google.gson.Gson;
 
@@ -12,7 +13,6 @@ public class VirtualShop {
     private ArrayList<Order> orders;
     private ArrayList<Product> products;
     private ArrayList<Product> orderProducts;
-
     Gson gson;
     File resultProducts;
     File resultOrders;
@@ -117,7 +117,7 @@ public class VirtualShop {
 
     public ArrayList<Product> searchProductsByName(String nameProduct) {
         ArrayList<Product> result = new ArrayList<Product>();
-        Collections.sort(products);
+        products.sort(Comparator.comparing(Product::getName));
         int begin = 0;
         int end = products.size() - 1;
         while (begin <= end) {
@@ -129,8 +129,20 @@ public class VirtualShop {
             }
             if (midName.compareToIgnoreCase(nameProduct) < 0) {
                 begin = mid + 1;
-            } else {
+            } else if (midName.compareToIgnoreCase(nameProduct) > 0){
                 end = mid - 1;
+            } else{
+                int left = mid - 1;
+                int right = mid + 1;
+                while (left >= 0 && products.get(left).getName().equalsIgnoreCase(nameProduct)) {
+                    result.add(products.get(left));
+                    left--;
+                }
+                while (right < products.size() && products.get(right).getName().equalsIgnoreCase(nameProduct)) {
+                    result.add(products.get(right));
+                    right++;
+                }
+                return result;
             }
         }
         return result;
@@ -138,6 +150,7 @@ public class VirtualShop {
 
     public ArrayList<Product> searchProductsByPrice(int minPrice, int maxPrice) {
         ArrayList<Product> result = new ArrayList<Product>();
+        products.sort(Comparator.comparing(Product::getPrice));
         int begin = 0;
         int end = products.size() - 1;
         while (begin <= end) {
@@ -149,8 +162,20 @@ public class VirtualShop {
             }
             if (midPrice < minPrice) {
                 begin = mid + 1;
-            } else {
+            } else if (midPrice > maxPrice) {
                 end = mid - 1;
+            } else {
+                int left = mid - 1;
+                int right = mid + 1;
+                while (left >= begin && products.get(left).getPrice() >= minPrice) {
+                    result.add(products.get(left));
+                    left--;
+                }
+                while (right <= end && products.get(right).getPrice() <= maxPrice) {
+                    result.add(products.get(right));
+                    right++;
+                }
+                return result;
             }
         }
         return result;
@@ -158,6 +183,7 @@ public class VirtualShop {
 
     public ArrayList<Product> searchProductsByCategory(ProductCategory category) {
         ArrayList<Product> result = new ArrayList<Product>();
+        products.sort(Comparator.comparing(Product::getProductCategory));
         int begin = 0;
         int end = products.size() - 1;
         while (begin <= end){
@@ -169,8 +195,20 @@ public class VirtualShop {
             }
             if(midCategory.compareTo(category) < 0){
                 begin = mid + 1;
-            }else{
+            }else if (midCategory.compareTo(category) > 0){
                 end = mid - 1;
+            } else{
+                int left = mid - 1;
+                int right = mid + 1;
+                while (left >= 0 && products.get(left).getProductCategory() == category) {
+                    result.add(products.get(left));
+                    left--;
+                }
+                while (right < products.size() && products.get(right).getProductCategory() == category) {
+                    result.add(products.get(right));
+                    right++;
+                }
+                return result;
             }
         }
         return result;
@@ -178,6 +216,7 @@ public class VirtualShop {
 
     public ArrayList<Product> searchProductsByTimesPurchased(int minTimesPurchased, int maxTimesPurchased) {
         ArrayList<Product> result = new ArrayList<>();
+        products.sort(Comparator.comparing(Product::getPurchasedNumber));
         int begin = 0;
         int end = products.size() - 1;
         while (begin <= end) {
@@ -189,32 +228,254 @@ public class VirtualShop {
             }
             if (midTimesPurchased < minTimesPurchased) {
                 begin = mid + 1;
-            } else {
+            } else if (midTimesPurchased > maxTimesPurchased) {
                 end = mid - 1;
+            } else {
+                int left = mid - 1;
+                int right = mid + 1;
+                while (left >= begin && products.get(left).getPurchasedNumber() >= minTimesPurchased) {
+                    result.add(products.get(left));
+                    left--;
+                }
+                while (right <= end && products.get(right).getPurchasedNumber() <= maxTimesPurchased) {
+                    result.add(products.get(right));
+                    right++;
+                }
+                return result;
             }
         }
         return result;
     }
 
-    public Order searchOrderByBuyerName(String  buyerName) {
-        Order order = null;
+    public ArrayList<Order> searchOrderByBuyerName(String  buyerName) {
+        ArrayList<Order> result = new ArrayList<>();
+        orders.sort(Comparator.comparing(Order::getBuyerName));
         int begin = 0;
         int end = orders.size() - 1;
         while (begin <= end) {
             int mid = (begin + end) / 2;
             Order midOrder = orders.get(mid);
             String midBuyerName = midOrder.getBuyerName();
-            if (midBuyerName.equals(buyerName)) {
-                order = midOrder;
-                return order;
+            if (midBuyerName.equalsIgnoreCase(buyerName)) {
+                result.add(midOrder);
             }
-            if (midBuyerName.compareTo(buyerName) < 0) {
+            if (midBuyerName.compareToIgnoreCase(buyerName) < 0) {
                 begin = mid + 1;
-            } else {
+            } else if (midBuyerName.compareToIgnoreCase(buyerName) > 0){
                 end = mid - 1;
+            } else{
+                int left = mid - 1;
+                int right = mid + 1;
+                while (left >= 0 && orders.get(left).getBuyerName().equalsIgnoreCase(buyerName)) {
+                    result.add(orders.get(left));
+                    left--;
+                }
+                while (right < orders.size() && orders.get(right).getBuyerName().equalsIgnoreCase(buyerName)) {
+                    result.add(orders.get(right));
+                    right++;
+                }
+                return result;
             }
         }
-        return null;
+        return result;
+    }
+    public ArrayList<Order> searchOrderByPrice(int minPrice, int maxPrice) {
+        ArrayList<Order> result = new ArrayList<>();
+        orders.sort(Comparator.comparing(Order::orderPrice));
+        int begin = 0;
+        int end = orders.size() - 1;
+        while (begin <= end) {
+            int mid = (begin + end) / 2;
+            Order midOrder = orders.get(mid);
+            double midPrice = midOrder.orderPrice();
+            if (midPrice >= minPrice && midPrice <= maxPrice) {
+                result.add(midOrder);
+            }
+            if (midPrice < minPrice) {
+                begin = mid + 1;
+            } else if (midPrice > maxPrice) {
+                end = mid - 1;
+            } else {
+                int left = mid - 1;
+                int right = mid + 1;
+                while (left >= begin && orders.get(left).orderPrice() >= minPrice) {
+                    result.add(orders.get(left));
+                    left--;
+                }
+                while (right <= end && orders.get(right).orderPrice() <= maxPrice) {
+                    result.add(orders.get(right));
+                    right++;
+                }
+                return result;
+            }
+        }
+        return result;
+    }
+
+    public ArrayList<Order> searchOrderByDate(String date) {
+        ArrayList<Order> result = new ArrayList<>();
+        orders.sort(Comparator.comparing(Order::getDate));
+        int begin = 0;
+        int end = orders.size() - 1;
+        while (begin <= end) {
+            int mid = (begin + end) / 2;
+            Order midOrder = orders.get(mid);
+            String midDate = midOrder.getDate();
+            if (midDate.equals(date)) {
+                result.add(midOrder);
+            }
+            if (midDate.compareTo(date) < 0) {
+                begin = mid + 1;
+            } else if (midDate.compareTo(date) > 0) {
+                end = mid - 1;
+            } else {
+                int left = mid - 1;
+                int right = mid + 1;
+                while (left >= 0 && orders.get(left).getDate().equals(date)) {
+                    result.add(orders.get(left));
+                    left--;
+                }
+                while (right < orders.size() && orders.get(right).getDate().equals(date)) {
+                    result.add(orders.get(right));
+                    right++;
+                }
+                return result;
+            }
+        }
+        return result;
+
+    }
+
+    public String printProductsByNameUpWard(ArrayList<Product> products){
+        int order = 1;
+        String result = "";
+        products.sort(Comparator.comparing(Product::getName));
+        for (Product product : products) {
+            result += order + ". " + product.toString() + "\n";
+            order++;
+        }
+        return result;
+    }
+
+    public String printProductsByNameDownWard(ArrayList<Product> products){
+        int order = 1;
+        String result = "";
+        products.sort(Comparator.comparing(Product::getName).reversed());
+        for (Product product : products) {
+            result += order + ". " + product.toString() + "\n";
+            order++;
+        }
+        return result;
+    }
+
+    public String printProductsByPriceUpWard(ArrayList<Product> products){
+        int order = 1;
+        String result = "";
+        products.sort(Comparator.comparing(Product::getPrice));
+        for (Product product : products) {
+            result += order + ". " + product.toString() + "\n";
+            order++;
+        }
+        return result;
+    }
+
+    public String printProductsByPriceDownWard(ArrayList<Product> products){
+        int order = 1;
+        String result = "";
+        products.sort(Comparator.comparing(Product::getPrice).reversed());
+        for (Product product : products) {
+            result += order + ". " + product.toString() + "\n";
+            order++;
+        }
+        return result;
+    }
+
+    public String printProductsByTimesPurchasedUpWard(ArrayList<Product> products){
+        int order = 1;
+        String result = "";
+        products.sort(Comparator.comparing(Product::getPurchasedNumber));
+        for (Product product : products) {
+            result += order + ". " + product.toString() + "\n";
+            order++;
+        }
+        return result;
+    }
+
+    public String printProductsByTimesPurchasedDownWard(ArrayList<Product> products){
+        int order = 1;
+        String result = "";
+        products.sort(Comparator.comparing(Product::getPurchasedNumber).reversed());
+        for (Product product : products) {
+            result += order + ". " + product.toString() + "\n";
+            order++;
+        }
+        return result;
+    }
+
+    public String printOrdersByBuyerNameUpWard(ArrayList<Order> orders){
+        int printOrder = 1;
+        String result = "";
+        orders.sort(Comparator.comparing(Order::getBuyerName));
+        for (Order order : orders) {
+            result += printOrder + ". " + order.toString() + "\n";
+            printOrder++;
+        }
+        return result;
+    }
+
+    public String printOrdersByBuyerNameDownWard(ArrayList<Order> orders){
+        int printOrder = 1;
+        String result = "";
+        orders.sort(Comparator.comparing(Order::getBuyerName).reversed());
+        for (Order order : orders) {
+            result += printOrder + ". " + order.toString() + "\n";
+            printOrder++;
+        }
+        return result;
+    }
+
+    public String printOrdersByPriceUpWard(ArrayList<Order> orders){
+        int printOrder = 1;
+        String result = "";
+        orders.sort(Comparator.comparing(Order::orderPrice));
+        for (Order order : orders) {
+            result += printOrder + ". " + order.toString() + "\n";
+            printOrder++;
+        }
+        return result;
+    }
+
+    public String printOrdersByPriceDownWard(ArrayList<Order> orders){
+        int printOrder = 1;
+        String result = "";
+        orders.sort(Comparator.comparing(Order::orderPrice).reversed());
+        for (Order order : orders) {
+            result += printOrder + ". " + order.toString() + "\n";
+            printOrder++;
+        }
+        return result;
+    }
+
+    public String printOrdersByDateUpWard(ArrayList<Order> orders){
+        int printOrder = 1;
+        String result = "";
+        orders.sort(Comparator.comparing(Order::getDate));
+        for (Order order : orders) {
+            result += printOrder + ". " + order.toString() + "\n";
+            printOrder++;
+        }
+        return result;
+    }
+
+    public String printOrdersByDateDownWard(ArrayList<Order> orders) {
+        int printOrder = 1;
+        String result = "";
+        orders.sort(Comparator.comparing(Order::getDate).reversed());
+        for (Order order : orders) {
+            result += printOrder + ". " + order.toString() + "\n";
+            printOrder++;
+        }
+        return result;
     }
     public boolean validateData(String name, String description, double price, int amount, int purchasedNumber, int productCategory){
         boolean correct=true;

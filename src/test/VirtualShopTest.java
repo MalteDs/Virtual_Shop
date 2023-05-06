@@ -206,14 +206,14 @@ public void testSearchProductsByCategory1(){
 
     public void testSearchOrderByBuyerName(){
         ArrayList<Order> productsToBuy = setUpStage5();
-        Order order= virtualShop.searchOrderByBuyerName("David M");
-        assertEquals(order.getBuyerName(), "David M");
+        ArrayList<Order> nameOrders = virtualShop.searchOrderByBuyerName("David M");
+        assertEquals(true, nameOrders.contains("David M"));
     }
 
     public void testSearchOrderByBuyerName2(){
         ArrayList<Order> productsToBuy = setUpStage5();
-        Order order= virtualShop.searchOrderByBuyerName("Alejando F");
-        assertEquals(order.getBuyerName(), "Alejando F");
+        ArrayList<Order> nameOrders = virtualShop.searchOrderByBuyerName("Alejando F");
+        assertEquals(true, nameOrders.contains("Alejando F"));
     }
 
 
