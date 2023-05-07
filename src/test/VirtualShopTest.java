@@ -2,6 +2,7 @@ package test;
 import junit.framework.TestCase;
 import model.*;
 
+
 import java.util.ArrayList;
 
 public class VirtualShopTest extends TestCase {
@@ -132,7 +133,7 @@ public class VirtualShopTest extends TestCase {
     public void testAddOrder2(){
         ArrayList<Product> productsToBuy = setUpStage3();
         try{
-            virtualShop.addOrder("David M", productsToBuy, "2020-10-10");
+            virtualShop.addOrder("Alejo M", productsToBuy, "2020-10-10");
         } catch (Exception e){
             fail();
         }
@@ -167,10 +168,10 @@ public class VirtualShopTest extends TestCase {
 
     public void testSearchProductsByPrice2(){
         setUpStage2();
-        ArrayList<Product> products = virtualShop.searchProductsByPrice(45000, 100000);
+        ArrayList<Product> products = virtualShop.searchProductsByPrice(600000, 7000000);
         for(Product p : products){
-            if(p.getPrice() >= 0 && p.getPrice() <= 2000000){
-                assertEquals(p.getPrice() >= 0 && p.getPrice() <= 2000000, true);
+            if(p.getPrice() >= 0 && p.getPrice() <= 7000000){
+                assertEquals(p.getPrice() >=  600000 && p.getPrice() <= 7000000, true);
             }
         }
     }
