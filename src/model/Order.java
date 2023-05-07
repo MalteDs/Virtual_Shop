@@ -2,14 +2,16 @@ package model;
 
 import java.util.ArrayList;
 
-public class Order implements OrderPrice {
+public class Order implements  OrderPrice{
     private String buyerName;
+    private  String date;
     private ArrayList<Product> products;
-    private String date;
+    private int id;
 
-    public Order(String buyerName, ArrayList<Product> products, String date) {
+
+    public Order(String buyerName, ArrayList<Product> products, String date, int id) {
         this.buyerName = buyerName;
-        this.products = products;
+        this.products= new ArrayList<>();
         this.date = date;
     }
 
@@ -35,6 +37,17 @@ public class Order implements OrderPrice {
 
     public void setDate(String date) {
         this.date = date;
+    }
+    public void addProducstOrder(Product product){
+        products.add(product);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
