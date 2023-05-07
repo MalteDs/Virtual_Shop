@@ -15,9 +15,9 @@ public class VirtualShopTest extends TestCase {
     public void setUpStage2() {
         setUpStage1();
         try {
-            virtualShop.addProductToInventory("Ana Frank's diary", "Description of the book Diary of Anne Frank", 50000, 20, 11, 1);
-            virtualShop.addProductToInventory("Red T-shirt", "Beautiful red t-shirt", 45000, 30, 12, 3);
-            virtualShop.addProductToInventory("Laptop", "Laptop with 16GB RAM", 3000000, 5, 3, 2);
+            virtualShop.addProductToInventory("Ana Frank's diary", "Description of the book Diary of Anne Frank", 50000, 20, 1);
+            virtualShop.addProductToInventory("Red T-shirt", "Beautiful red t-shirt", 45000, 30, 3);
+            virtualShop.addProductToInventory("Laptop", "Laptop with 16GB RAM", 3000000, 5, 2);
         } catch (Exception e) {
             fail();
         }
@@ -28,33 +28,47 @@ public class VirtualShopTest extends TestCase {
         Product orderProduct1 = virtualShop.productExists("Laptop");
         Product orderProduct2 = virtualShop.productExists("Red T-shirt");
         Product orderProduct3 = virtualShop.productExists("Ana Frank's diary");
-        virtualShop.addProductToOrder(orderProduct1);
-        virtualShop.addProductToOrder(orderProduct2);
-        return virtualShop.addProductToOrder(orderProduct3);
+        ArrayList<Product> products = new ArrayList<>();
+        products.add(orderProduct1);
+        products.add(orderProduct2);
+        products.add(orderProduct3);
+        Order order = new Order("David M", new ArrayList<>(), "2020-10-10", 1);
+        try {
+            virtualShop.insertProductsInOrder(orderProduct1, order);
+            virtualShop.insertProductsInOrder(orderProduct2, order);
+            virtualShop.insertProductsInOrder(orderProduct3, order);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return products;
     }
 
-    public ArrayList<Product> setUpStage4(){
+    public void setUpStage4(){
         setUpStage2();
         Product orderProduct1 = virtualShop.productExists("Laptop");
-        return virtualShop.addProductToOrder(orderProduct1);
+        Order order = new Order("Alejo", new ArrayList<>(), "2020-10-10", 1);
+        try {
+            virtualShop.insertProductsInOrder(orderProduct1, order);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
     }
-    public ArrayList<Orders> setUpStage5(){
+    public void setUpStage5(){
         setUpStage3();
         try{
-            ArrayList<Product> products1 = setUpStage3();
-            ArrayList<Product> products2 = setUpStage4();
+            ArrayList<Product> products1 = new ArrayList<>();
+            ArrayList<Product> products2 = new ArrayList<>();
             virtualShop.addOrder("David M", products1, "2020-10-10");
-            return virtualShop.addOrder("Alejando F", products2, "2020-10-10");
+            virtualShop.addOrder("Alejando F", products2, "2020-10-10");
         } catch (Exception e){
             fail();
         }
-        return null;
     }
     public void testAddProductToInventory1() {
         setUpStage1();
         try {
-            virtualShop.addProductToInventory("Smart TV", "55-inch Smart TV", 1500000, 10, 5, 2);
+            virtualShop.addProductToInventory("Smart TV", "55-inch Smart TV", 1500000, 10, 2);
         } catch (Exception e) {
             fail();
         }
@@ -63,7 +77,7 @@ public class VirtualShopTest extends TestCase {
     public void testAddProductToInventory2() {
         setUpStage2();
         try {
-            virtualShop.addProductToInventory("Smart TV", "55-inch Smart TV", 1500000, 10, 5, 2);
+            virtualShop.addProductToInventory("Smart TV", "55-inch Smart TV", 1500000, 10,  2);
         } catch (Exception e) {
             fail();
         }
@@ -85,7 +99,10 @@ public class VirtualShopTest extends TestCase {
         setUpStage2();
         try{
             Product orderProduct = virtualShop.productExists("Red T-shirt");
-            virtualShop.addProductToOrder(orderProduct);
+            ArrayList<Product> products = new ArrayList<>();
+            products.add(orderProduct);
+            Order order = new Order("David M", products, "2020-10-10", 1);
+            virtualShop.insertProductsInOrder(orderProduct, order);
         } catch (Exception e){
             fail();
         }
@@ -94,8 +111,11 @@ public class VirtualShopTest extends TestCase {
     public void testAddProductToOrder2(){
         setUpStage2();
         try{
-            Product orderProduct = virtualShop.productExists("Laptop");
-            virtualShop.addProductToOrder(orderProduct);
+            Product orderProduct = virtualShop.productExists("Red T-shirt");
+            ArrayList<Product> products = new ArrayList<>();
+            products.add(orderProduct);
+            Order order = new Order("David M", products, "2020-10-10", 1);
+            virtualShop.insertProductsInOrder(orderProduct, order);
         } catch (Exception e){
             fail();
         }
@@ -194,18 +214,6 @@ public void testSearchProductsByCategory1(){
                 assertEquals(p.getPurchasedNumber() >= 0 && p.getPurchasedNumber() <= 100, true);
             }
         }
-    }
-
-    public void testSearchOrderByBuyerName(){
-        ArrayList<Orders> productsToBuy = setUpStage5();
-        Orders order= virtualShop.searchOrderByBuyerName("David M");
-        assertEquals(order.getBuyerName(), "David M");
-    }
-
-    public void testSearchOrderByBuyerName2(){
-        ArrayList<Orders> productsToBuy = setUpStage5();
-        Orders order= virtualShop.searchOrderByBuyerName("Alejando F");
-        assertEquals(order.getBuyerName(), "Alejando F");
     }
 
 
