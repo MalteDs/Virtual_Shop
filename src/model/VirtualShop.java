@@ -1,18 +1,20 @@
 package model;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import exceptions.*;
+
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+
 
 public class VirtualShop {
+    private int idOrdes ;
     private ArrayList<Order> orders;
     private ArrayList<Product> products;
     private ArrayList<Product> orderProducts;
+
+
     Gson gson;
     File resultProducts;
     File resultOrders;
@@ -30,25 +32,44 @@ public class VirtualShop {
         resultProducts = new File(dataDirectory, "resultProducts.json");
         resultOrders = new File(dataDirectory, "resultOrders.json");
 
+
+    }
+    public void changeTheJson(){
+        try{
+            JsonObject json= new JsonObject();
+            FileWriter archivoOrders= new FileWriter(resultOrders);
+            FileWriter archivoProducts= new FileWriter(resultProducts);
+            archivoOrders.write("");
+            archivoProducts.write("");
+            archivoOrders.flush();
+            archivoProducts.flush();
+            archivoOrders.close();
+            archivoProducts.close();
+            uploadJsonProducts();
+            uploadJsonOrders();
+        }catch (Exception e){
+            System.out.println(" Hubo un error ");
+        }
     }
 
 
-    public String addProductToInventory(String name, String description, int price, int amount, int purchasedNumber, int productCategory) throws Exception {
+    public String addProductToInventory(String name, String description, double price, int amount, int productCategory) throws Exception {
         //Agregar productos al inventario
-        String msj="";
-        for(Product product : products){
-            if(product.getName().equalsIgnoreCase(name)){
+        String msj = "";
+        for (Product product : products) {
+            if (product.getName().equalsIgnoreCase(name)) {
                 throw new Exception("The product already exists in the inventory.");
             }
         }
-        Product newProduct = new Product(name, description, price, amount, purchasedNumber, productCategory);
+        Product newProduct = new Product(name, description, price, amount, productCategory);
         products.add(newProduct);
-        converToGson(newProduct);
-        msj="Product added successfully.";
+        converToGsonProduct(newProduct);
+        msj = "Product added successfully.";
         return msj;
     }
-    
-    public void converToGson(Product product){
+
+
+    public void converToGsonProduct(Product product) {
         String json = gson.toJson(product);
         try (FileWriter fw = new FileWriter(resultProducts, true)) {
             fw.write(json);
@@ -56,63 +77,70 @@ public class VirtualShop {
             System.out.println("Error al escribir en el archivo result.json: " + e.getMessage());
         }
     }
+    public void convertToGsonOrder(Order order) {
+        String json = gson.toJson(order) ;
+        try (FileWriter fw = new FileWriter(resultOrders, true)) {
+            fw.write(json);
+        } catch (IOException e) {
+            System.out.println("Error al escribir en el archivo result.json: " + e.getMessage());
+        }
 
-
+    }
     public String deleteProductFromInventory(String nameProduct) {
-        String msj="";
+        String msj = "";
         //Eliminar del inventario
         for (Product p : products) {
             if (p.getName().equals(nameProduct)) {
                 products.remove(p);
-                msj="Producto eliminado exitosamente.";
-                }
+                msj = "Producto eliminado exitosamente.";
             }
-        if(msj==null){
-            msj="Producto no encontrado en el inventario.";
+        }
+        if (msj == null) {
+            msj = "Producto no encontrado en el inventario.";
         }
         return msj;
     }
 
-    public Product productExists(String nameProduct){
-        Product product = null;
-        int begin = 0;
-        int end = products.size() - 1;
-        while (begin <= end) {
-            int mid = (begin + end) / 2;
-            Product midProduct = products.get(mid);
-            String midName = midProduct.getName();
-            if (midName.equalsIgnoreCase(nameProduct)) {
-                product = midProduct;
-            }
-            if (midName.compareToIgnoreCase(nameProduct) < 0) {
-                begin = mid + 1;
-            } else {
-                end = mid - 1;
-            }
-        }
-        return product;
-    }
-
-    public ArrayList<Product> addProductToOrder(Product product, int quantity) throws Exception {
-        try{
-            if(product.getAmount()<=0){
-                throw new quantityException("The product is not available.");
-            }
-            orderProducts.add(product);
-            product.decreaseAvailableQuantity(quantity);
-            return orderProducts;
-        }catch (quantityException e){
-            throw new Exception(e.getMessage());
-        }
-    }
-
-    public ArrayList<Order> addOrder(String buyerName, ArrayList<Product> products, String date) {
-        Order nuevoPedido = new Order(buyerName, products, date);
+    public Product productExists(String nameProduct) {
         for (Product p : products) {
-            p.decreaseAvailableQuantity(1);
+            if (p.getName().equals(nameProduct)) {
+                return p;
+            }
         }
+        return null;
+    }
+
+    public boolean insertProductsInOrder(Product product, Order order){
+        if(product.getAmount()>0){
+            order.addProducstOrder(product);
+            return  true;
+        }else{
+            return  false;
+        }
+    }
+    public Order addOrder(String buyerName, ArrayList<Product> products, String date) {
+        int id=this.idOrdes + 1;
+        Order nuevoPedido = new Order(buyerName, products, date,id);
         orders.add(nuevoPedido);
-        return orders;
+        convertToGsonOrder(nuevoPedido);
+        return nuevoPedido;
+    }
+
+    public boolean validateData(String name, String description, double price, int amount, int productCategory ) {
+        boolean correct = true;
+        try {
+            if (name == null || description == null || price < 0 || amount < 0  || productCategory < 0 || productCategory > 8) {
+                correct = false;
+            } else {
+                correct = true;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Hubo un error");
+
+        } catch (RuntimeException e) {
+            System.out.println("Ocurrio un error");
+        }
+        return correct;
     }
 
     public ArrayList<Product> searchProductsByName(String nameProduct) {
@@ -148,7 +176,7 @@ public class VirtualShop {
         return result;
     }
 
-    public ArrayList<Product> searchProductsByPrice(int minPrice, int maxPrice) {
+    public ArrayList<Product> searchProductsByPrice(double minPrice, double maxPrice) {
         ArrayList<Product> result = new ArrayList<Product>();
         products.sort(Comparator.comparing(Product::getPrice));
         int begin = 0;
@@ -156,7 +184,7 @@ public class VirtualShop {
         while (begin <= end) {
             int mid = (begin + end) / 2;
             Product midProduct = products.get(mid);
-            int midPrice = midProduct.getPrice();
+            double midPrice = midProduct.getPrice();
             if (midPrice >= minPrice && midPrice <= maxPrice) {
                 result.add(midProduct);
             }
@@ -279,7 +307,7 @@ public class VirtualShop {
         }
         return result;
     }
-    public ArrayList<Order> searchOrderByPrice(int minPrice, int maxPrice) {
+    public ArrayList<Order> searchOrderByPrice(double minPrice, double maxPrice) {
         ArrayList<Order> result = new ArrayList<>();
         orders.sort(Comparator.comparing(Order::orderPrice));
         int begin = 0;
@@ -368,6 +396,37 @@ public class VirtualShop {
         return result;
     }
 
+    public String printProductsByCategoryUpWard(ArrayList<Product> products){
+        int order = 1;
+        String result = "";
+        products.sort(Comparator.comparing(Product::getProductCategory));
+        for (Product product : products) {
+            result += order + ". " + product.toString() + "\n";
+            order++;
+        }
+        return result;
+    }
+    public String printProductsByCategoryDownWard(ArrayList<Product> products){
+        int order = 1;
+        String result = "";
+        products.sort(Comparator.comparing(Product::getProductCategory).reversed());
+        for (Product product : products) {
+            result += order + ". " + product.toString() + "\n";
+            order++;
+        }
+        return result;
+    }
+    public String deleteOrder(int id){
+        String msj="";
+        for(Order order :this.orders){
+            if(order.getId()==id){
+                this.orders.remove(order);
+                return  msj="Order successfully deleted";
+            }
+        }
+        return msj="Order can not be deleted";
+    }
+
     public String printProductsByPriceUpWard(ArrayList<Product> products){
         int order = 1;
         String result = "";
@@ -379,7 +438,7 @@ public class VirtualShop {
         return result;
     }
 
-    public String printProductsByPriceDownWard(ArrayList<Product> products){
+    public String printProductsByPriceDownWard (ArrayList<Product> products){
         int order = 1;
         String result = "";
         products.sort(Comparator.comparing(Product::getPrice).reversed());
@@ -477,22 +536,100 @@ public class VirtualShop {
         }
         return result;
     }
-    public boolean validateData(String name, String description, double price, int amount, int purchasedNumber, int productCategory){
-        boolean correct=true;
-        try{
-            if(name==null || description ==null || price <0 || amount<0 || purchasedNumber<0 || productCategory<0 || productCategory>8){
-                correct=false;
-            }else{
-                correct=true;
-            }
-        }catch(NumberFormatException e){
-            System.out.println("Hubo un error");
 
-        }catch(RuntimeException e){
-            System.out.println("Ocurrio un error");
+    public void uploadJsonOrders(){
+        try {
+            FileInputStream fis = new FileInputStream(resultOrders);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+            String line = " ";
+            String content = " ";
+            while ((line = reader.readLine()) != null) {
+                content += line;
+
+            }
+            Order[] array = gson.fromJson(content, Order[].class);
+            reader.close();
+            for (int i = 0; i < array.length; i++) {
+                orders.add(array[i]);
+            }
+
+        }catch (FileNotFoundException e){
+            System.out.println("error no encontre el archivo");
+        }catch (IOException e){
+            System.out.println("error otro");
+        }catch (NullPointerException e) {
+
         }
-        return correct;
     }
 
+    public void uploadJsonProducts() {
+        try {
+            FileInputStream fis = new FileInputStream(resultProducts);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
+            String line = " ";
+            String content = " ";
+            while ((line = reader.readLine()) != null) {
+                content += line;
 
+            }
+            Product[] array = gson.fromJson(content, Product[].class);
+            reader.close();
+            for (int i = 0; i < array.length; i++) {
+                products.add(array[i]);
+            }
+
+        }catch (FileNotFoundException e){
+            System.out.println("error no encontre el archivo");
+        }catch (IOException e){
+            System.out.println("error otro");
+        }catch (NullPointerException e) {
+
+        }
+
+    }
+    public ProductCategory selectCategory(int option) {
+        ProductCategory productCategory= null;
+        switch (option) {
+            case 1:
+                productCategory = ProductCategory.BOOKS;
+                break;
+            case 2:
+                productCategory = ProductCategory.ELECTRONICS;
+                break;
+            case 3:
+                productCategory = ProductCategory.CLOTHES_AND_ACCESSORIES;
+                break;
+            case 4:
+                productCategory = ProductCategory.FOOD_AND_DRINKS;
+                break;
+            case 5:
+                productCategory = ProductCategory.STATIONERY;
+                break;
+            case 6:
+                productCategory = ProductCategory.SPORTS;
+                break;
+            case 7:
+                productCategory = ProductCategory.BEAUTY_AND_PERSONAL_CARE_PRODUCTS;
+                break;
+            case 8:
+                productCategory = ProductCategory.TOYS_AND_GAMES;
+                break;
+        }
+        return productCategory;
+    }
+    public ArrayList<Product> getProducts(){
+        return this.products;
+    }
+
+    public ArrayList<Order> getOrders() {
+        return orders;
+    }
+
+    public int getIdOrdes() {
+        return idOrdes;
+    }
+
+    public void setIdOrdes(int idOrdes) {
+        this.idOrdes = idOrdes;
+    }
 }

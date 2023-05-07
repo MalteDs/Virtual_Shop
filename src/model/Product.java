@@ -4,17 +4,17 @@ public class Product implements productQuantity, Comparable<Product> {
 
     private String name;
     private String description;
-    private int price;
+    private double price;
     private int amount;
     private int purchasedNumber;
     private ProductCategory productCategory;
 
-    public Product(String name, String description, int price, int amount, int purchasedNumber, int productCategory) {
+    public Product(String name, String description, double price, int amount, int productCategory) {
         this.name = name;
         this.description = description;
         this.price = price;
         this.amount = amount;
-        this.purchasedNumber = purchasedNumber;
+        this.purchasedNumber = 0;
         switch (productCategory){
             case 1: this.productCategory = ProductCategory.BOOKS;
                 break;
@@ -52,7 +52,7 @@ public class Product implements productQuantity, Comparable<Product> {
         this.description = description;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
@@ -83,6 +83,7 @@ public class Product implements productQuantity, Comparable<Product> {
     public void setProductCategory(ProductCategory productCategory) {
         this.productCategory = productCategory;
     }
+
     @Override
     public void addAvailableQuantity(int cantidad) {
         this.amount += cantidad;
@@ -95,5 +96,14 @@ public class Product implements productQuantity, Comparable<Product> {
     @Override
     public int compareTo(Product product) {
         return this.name.compareTo(product.getName());
+    }
+
+    @Override
+    public String toString() {
+        return "Name product: " + name  +
+                ", price: " + price +
+                ", amount: " + amount +
+                ", number of times purchased" + purchasedNumber +
+                ", category : " + productCategory;
     }
 }
