@@ -11,6 +11,8 @@ public class Main {
     static VirtualShop vs = new VirtualShop();
     static Scanner sc = new Scanner(System.in);
     public static void main(String[] args) {
+        vs.uploadJsonProducts();
+        vs.uploadJsonOrders();
         int sel = 0;
         boolean exit = false;
         try {
@@ -22,8 +24,11 @@ public class Main {
                     case 1 -> inventory(sc);
                     case 2 -> orders(sc);
                     case 3 -> {
-                        exit = true;
                         vs.changeTheJson();
+                        vs.convertToGsonOrder(vs.getOrders());
+                        vs.converToGsonProduct(vs.getProducts());
+                        exit = true;
+
                     }
                     default -> {
                         print("Enter a valid option");

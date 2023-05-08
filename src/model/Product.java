@@ -104,6 +104,6 @@ public class Product implements productQuantity, Comparable<Product> {
                 ", price: " + price +
                 ", amount: " + amount +
                 ", number of times purchased" + purchasedNumber +
-                ", category : " + productCategory;
+                ", category : " + productCategory+"\n";
     }
 }

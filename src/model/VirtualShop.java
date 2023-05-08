@@ -32,7 +32,6 @@ public class VirtualShop {
         resultProducts = new File(dataDirectory, "resultProducts.json");
         resultOrders = new File(dataDirectory, "resultOrders.json");
 
-
     }
     public void changeTheJson(){
         try{
@@ -63,13 +62,12 @@ public class VirtualShop {
         }
         Product newProduct = new Product(name, description, price, amount, productCategory);
         products.add(newProduct);
-        converToGsonProduct(newProduct);
         msj = "Product added successfully.";
         return msj;
     }
 
 
-    public void converToGsonProduct(Product product) {
+    public void converToGsonProduct(ArrayList<Product> product) {
         String json = gson.toJson(product);
         try (FileWriter fw = new FileWriter(resultProducts, true)) {
             fw.write(json);
@@ -77,7 +75,7 @@ public class VirtualShop {
             System.out.println("Error al escribir en el archivo result.json: " + e.getMessage());
         }
     }
-    public void convertToGsonOrder(Order order) {
+    public void convertToGsonOrder(ArrayList<Order> order) {
         String json = gson.toJson(order) ;
         try (FileWriter fw = new FileWriter(resultOrders, true)) {
             fw.write(json);
@@ -122,7 +120,6 @@ public class VirtualShop {
         int id=this.idOrdes + 1;
         Order nuevoPedido = new Order(buyerName, products, date,id);
         orders.add(nuevoPedido);
-        convertToGsonOrder(nuevoPedido);
         return nuevoPedido;
     }
 

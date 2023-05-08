@@ -58,4 +58,13 @@ public class Order implements  OrderPrice{
         }
         return finalPrice;
     }
+
+    @Override
+    public String toString() {
+        return
+                "[ buyerName = " + buyerName +
+                ", date='" + date +
+                ", products=" + products +
+                "] \n";
+    }
 }
